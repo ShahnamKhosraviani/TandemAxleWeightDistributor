@@ -1,0 +1,472 @@
+from tkinter import *
+
+from tkinter import StringVar
+import tkinter.messagebox
+import os
+import subprocess
+import sys
+# import PIL
+# from PIL import ImageTk, Image
+# from setuptools import setup
+
+
+
+
+
+# APP = ["tandemApp.py"]
+# DATA_FILES =["logo3.png"]
+# OPTIONS = {"argv_emulation": True}
+#
+# setup(app=APP, data_files=DATA_FILES,options={"py2app": OPTIONS},setup_requires=["py2app"])
+
+
+
+
+
+window = tkinter.Tk()
+window.title("Tandem Axle Weight Distributor")
+window.geometry("700x400")
+
+# img = ImageTk.PhotoImage(Image.open("logo3.png"))
+# panel = Label(window, image = img)
+# panel.place(x=5, y=250)
+
+
+
+
+
+
+def refresh():
+    python = sys.executable
+    os.execl(python, python, *sys.argv)
+
+def close():
+    window.destroy()
+
+## LIST OF VALUES
+
+a1 = 400
+a2 = 800
+a3 = 1200
+a4 = 1600
+a5 = 2000
+a6 = 2400
+a7 = 2800
+a8 = 3200
+a9 = 3600
+a10 = 4000
+
+steer = IntVar()
+drives = IntVar()
+tandem = IntVar()
+
+
+
+
+tweight = 34000
+dweight = 34000
+
+radio= IntVar()
+
+### GUI LABELS AND TEXTBOXES
+
+emptylabel = Label(window, fg="white", font=("Arial", 14))
+emptylabel.grid(row=1, column=3,sticky=W)
+
+emptylabel2 = Label(window, fg="white", font=("Arial", 24))
+emptylabel2.place(x=220, y=350)
+
+
+emptylabel3 = Label(window, fg="green", font=("Arial", 14))
+emptylabel3.place(x=210,y=270)
+
+emptylabel4 = Label(window, fg="green", font=("Arial", 14))
+emptylabel4.place(x=210,y=290)
+
+
+
+emptylabel6 = Label(window, font=("Arial", 24))
+emptylabel6.place(x=210, y=350)
+
+
+
+label1 = Label(window, text="Enter your Steer Axle Weight in LBS.", fg="white")
+label1.grid(row=0, column=0, padx=10, pady=10, sticky=W)
+
+label2 = Label(window, text="Enter your Drive Axle Weight in LBS.", fg="white")
+label2.grid(row=1, column=0, padx=10, pady=10, sticky=W)
+
+label3 = Label(window, text="Enter your Tandem Axle Weight in LBS.", fg="white")
+label3.grid(row=2, column=0, padx=10, pady=10, sticky=W)
+
+textbox1 = Entry(window, textvariable=steer, fg="white", font=("Arial", 14))
+textbox1.grid(row=0, column=1,sticky=W)
+
+textbox2 = Entry(window, textvariable=drives, fg="white", font=("Arial", 14))
+textbox2.grid(row=1, column=1,sticky=W)
+
+textbox3 = Entry(window, textvariable=tandem, fg="white", font=("Arial", 14))
+textbox3.grid(row=2, column=1,sticky=W)
+
+
+
+### FUNCTIONS
+
+
+def my_function():
+    gross = steer.get() + drives.get() + tandem.get()
+    emptylabel.config(text="Your Total Gross Weight in lbs. is: " +str(gross), bg="black",relief="flat" )
+
+
+
+def legal():
+    if drives.get() <= dweight and tandem.get() <= tweight:
+        emptylabel2.config(text="You are DOT legal to drive!",borderwidth=4, relief="raised",background="green")
+    if tandem.get() >= tweight:
+        label4 = Label(window, text="Tandem Axle over 34,000 lbs. slide tandems back:", fg="red", font=("Arial", 28))
+        label4.place(x=0, y=160)
+    if drives.get() >= dweight:
+        label4 = Label(window, text="Drive Axle over 34,000 lbs. slide tandems forward:", fg="red",
+                   font=("Arial", 28))
+        label4.place(x=0, y=160)
+    if drives.get() > dweight:
+        tkinter.messagebox.showinfo("You are NOT DOT legal to drive!", """Your drive axle exceeds 34,000 lbs! \n
+        Every tandem hole forward will reduce drive axle weight
+        by 400 lbs. but, will increase 400 lbs. on you tandem axle. \n
+        Please slide your tandem pin forward 1 - 10 holes to recalculate""")
+
+    if tandem.get() > tweight:
+        tkinter.messagebox.showinfo("You are NOT DOT legal to drive!", """Your tandem axle exceeds 34,000 lbs!\n 
+        Every tandem hole moved back will reduce tandem axle weight
+        by 400 lbs. but, it will increase 400 lbs. on your drive axle. \n
+        Please slide your tandem pin back 1 - 10 holes to recalculate""")
+
+
+### TANDEMS OVER 34000 MOVE BACK
+def a():
+    caltandem = tandem.get() - a1
+    caldrives = drives.get() + a1
+    emptylabel4.config(text="Your new weight on the Drive axle is: " + str(caldrives))
+    emptylabel3.config(text="Your new weight on the Tandem axle is: " + str(caltandem))
+    if caldrives <= dweight and caltandem <= tweight:
+        emptylabel6.config(text="You are DOT legal to drive!",borderwidth=4,relief="raised", background="green",)
+    if caldrives >= dweight or caltandem >= tweight:
+        emptylabel6.config(text="You are NOT DOT legal to drive!", borderwidth=4,relief="raised", background="red")
+
+
+
+def b():
+    caltandem = tandem.get() - a2
+    caldrives = drives.get() + a2
+    emptylabel4.config(text="Your new weight on the Drive axle is: " + str(caldrives))
+    emptylabel3.config(text="Your new weight on the Tandem axle is: " + str( caltandem))
+    if caldrives <= dweight and caltandem <= tweight:
+        emptylabel6.config(text="You are DOT legal to drive!", borderwidth=4, relief="raised", background="green")
+    if caldrives >= dweight or caltandem >= tweight:
+        emptylabel6.config(text="You are NOT DOT legal to drive!", borderwidth=4,relief="raised", background="red")
+
+def c():
+    caltandem = tandem.get() - a3
+    caldrives = drives.get() + a3
+    emptylabel4.config(text="Your new weight on the Drive axle is: " + str(caldrives))
+    emptylabel3.config(text="Your new weight on the Tandem axle is: " + str( caltandem))
+    if caldrives <= dweight and caltandem <= tweight:
+        emptylabel6.config(text="You are DOT legal to drive!", borderwidth=4, relief="raised", background="green")
+    if caldrives >= dweight or caltandem >= tweight:
+        emptylabel6.config(text="You are NOT DOT legal to drive!", borderwidth=4,relief="raised", background="red")
+
+
+def d():
+    caltandem = tandem.get() - a4
+    caldrives = drives.get() + a4
+    emptylabel4.config(text="Your new weight on the Drive axle is: " + str(caldrives))
+    emptylabel3.config(text="Your new weight on the Tandem axle is: " + str(caltandem))
+    if caldrives <= dweight and caltandem <= tweight:
+        emptylabel6.config(text="You are DOT legal to drive!", borderwidth=4, relief="raised", background="green")
+    if caldrives >= dweight or caltandem >= tweight:
+        emptylabel6.config(text="You are NOT DOT legal to drive!", borderwidth=4,relief="raised", background="red")
+def e():
+    caltandem = tandem.get() - a5
+    caldrives = drives.get() + a5
+    emptylabel4.config(text="Your new weight on the Drive axle is: " + str(caldrives))
+    emptylabel3.config(text="Your new weight on the Tandem axle is: " + str(caltandem))
+    if caldrives <= dweight and caltandem <= tweight:
+        emptylabel6.config(text="You are DOT legal to drive!", borderwidth=4, relief="raised", background="green")
+    if caldrives >= dweight or caltandem >= tweight:
+        emptylabel6.config(text="You are NOT DOT legal to drive!", borderwidth=4,relief="raised", background="red")
+def f():
+    caltandem = tandem.get() - a6
+    caldrives = drives.get() + a6
+    emptylabel4.config(text="Your new weight on the Drive axle is: " + str(caldrives))
+    emptylabel3.config(text="Your new weight on the Tandem axle is: " + str(caltandem))
+    if caldrives <= dweight and caltandem <= tweight:
+        emptylabel6.config(text="You are DOT legal to drive!", borderwidth=4, relief="raised", background="green")
+    if caldrives >= dweight or caltandem >= tweight:
+        emptylabel6.config(text="You are NOT DOT legal to drive!", borderwidth=4,relief="raised", background="red")
+
+def g():
+    caltandem = tandem.get() - a7
+    caldrives = drives.get() + a7
+    emptylabel4.config(text="Your new weight on the Drive axle is: " + str(caldrives))
+    emptylabel3.config(text="Your new weight on the Tandem axle is: " + str(caltandem))
+    if caldrives <= dweight and caltandem <= tweight:
+        emptylabel6.config(text="You are DOT legal to drive!", borderwidth=4, relief="raised", background="green")
+    if caldrives >= dweight or caltandem >= tweight:
+        emptylabel6.config(text="You are NOT DOT legal to drive!", borderwidth=4,relief="raised", background="red")
+def h():
+    caltandem = tandem.get() - a8
+    caldrives = drives.get() + a8
+    emptylabel4.config(text="Your new weight on the Drive axle is: " + str(caldrives))
+    emptylabel3.config(text="Your new weight on the Tandem axle is: " + str(caltandem))
+    if caldrives <= dweight and caltandem <= tweight:
+        emptylabel6.config(text="You are DOT legal to drive!", borderwidth=4, relief="raised", background="green")
+    if caldrives >= dweight or caltandem >= tweight:
+        emptylabel6.config(text="You are NOT DOT legal to drive!", borderwidth=4,relief="raised", background="red")
+
+def i():
+    caltandem = tandem.get() - a9
+    caldrives = drives.get() + a9
+    emptylabel4.config(text="Your new weight on the Drive axle is: " + str(caldrives))
+    emptylabel3.config(text="Your new weight on the Tandem axle is: " + str(caltandem))
+    if caldrives <= dweight and caltandem <= tweight:
+        emptylabel6.config(text="You are DOT legal to drive!", borderwidth=4, relief="raised", background="green")
+    if caldrives >= dweight or caltandem >= tweight:
+        emptylabel6.config(text="You are NOT DOT legal to drive!", borderwidth=4,relief="raised", background="red")
+def j():
+    caltandem = tandem.get() - a10
+    caldrives = drives.get() + a10
+    emptylabel4.config(text="Your new weight on the Drive axle is: " + str(caldrives))
+    emptylabel3.config(text="Your new weight on the Tandem axle is: " + str(caltandem))
+    if caldrives <= dweight and caltandem <= tweight:
+        emptylabel6.config(text="You are DOT legal to drive!", borderwidth=4, relief="raised", background="green")
+    if caldrives >= dweight or caltandem >= tweight:
+        emptylabel6.config(text="You are NOT DOT legal to drive!", borderwidth=4,relief="raised", background="red")
+
+#### DRIVES OVER 34000 MOVE FORWARD (NEED TO CREATE BUTTONS FOR THESE)
+
+
+
+
+
+def k():
+    caltandem = tandem.get() + a1
+    caldrives = drives.get() - a1
+    emptylabel4.config(text="Your new weight on the Drive axle is: " + str(caldrives))
+    emptylabel3.config(text="Your new weight on the Tandem axle is: " + str(caltandem))
+    if caldrives <= dweight and caltandem <= tweight:
+        emptylabel6.config(text="You are DOT legal to drive!", borderwidth=4, relief="raised", background="green")
+    if caldrives >= dweight or caltandem >= tweight:
+        emptylabel6.config(text="You are NOT DOT legal to drive!", borderwidth=4,relief="raised", background="red")
+def l():
+    caltandem = tandem.get() + a2
+    caldrives = drives.get() - a2
+    emptylabel4.config(text="Your new weight on the Drive axle is: " + str(caldrives))
+    emptylabel3.config(text="Your new weight on the Tandem axle is: " + str(caltandem))
+    if caldrives <= dweight and caltandem <= tweight:
+        emptylabel6.config(text="You are DOT legal to drive!", borderwidth=4, relief="raised", background="green")
+    if caldrives >= dweight or caltandem >= tweight:
+        emptylabel6.config(text="You are NOT DOT legal to drive!", borderwidth=4,relief="raised", background="red")
+def m():
+            caltandem = tandem.get() + a3
+            caldrives = drives.get() - a3
+            emptylabel4.config(text="Your new weight on the Drive axle is: " + str(caldrives))
+            emptylabel3.config(text="Your new weight on the Tandem axle is: " + str(caltandem))
+            if caldrives <= dweight and caltandem <= tweight:
+                emptylabel6.config(text="You are DOT legal to drive!", borderwidth=4, relief="raised",background="green")
+            if caldrives >= dweight or caltandem >= tweight:
+                emptylabel6.config(text="You are NOT DOT legal to drive!", borderwidth=4,relief="raised", background="red")
+def n():
+            caltandem = tandem.get() + a4
+            caldrives = drives.get() - a4
+            emptylabel4.config(text="Your new weight on the Drive axle is: " + str(caldrives))
+            emptylabel3.config(text="Your new weight on the Tandem axle is: " + str(caltandem))
+            if caldrives <= dweight and caltandem <= tweight:
+                emptylabel6.config(text="You are DOT legal to drive!", borderwidth=4, relief="raised",background="green")
+            if caldrives >= dweight or caltandem >= tweight:
+                emptylabel6.config(text="You are NOT DOT legal to drive!", borderwidth=4,relief="raised", background="red")
+def o():
+            caltandem = tandem.get() + a5
+            caldrives = drives.get() - a5
+            emptylabel4.config(text="Your new weight on the Drive axle is: " + str(caldrives))
+            emptylabel3.config(text="Your new weight on the Tandem axle is: " + str(caltandem))
+            if caldrives <= dweight and caltandem <= tweight:
+                emptylabel6.config(text="You are DOT legal to drive!", borderwidth=4, relief="raised",background="green")
+            if caldrives >= dweight or caltandem >= tweight:
+                emptylabel6.config(text="You are NOT DOT legal to drive!", borderwidth=4,relief="raised", background="red")
+def p():
+            caltandem = tandem.get() + a6
+            caldrives = drives.get() - a6
+            emptylabel4.config(text="Your new weight on the Drive axle is: " + str(caldrives))
+            emptylabel3.config(text="Your new weight on the Tandem axle is: " + str(caltandem))
+            if caldrives <= dweight and caltandem <= tweight:
+                emptylabel6.config(text="You are DOT legal to drive!", borderwidth=4, relief="raised",background="green")
+            if caldrives >= dweight or caltandem >= tweight:
+                emptylabel6.config(text="You are NOT DOT legal to drive!", borderwidth=4,relief="raised", background="red")
+def q():
+            caltandem = tandem.get() + a7
+            caldrives = drives.get() - a7
+            emptylabel4.config(text="Your new weight on the Drive axle is: " + str(caldrives))
+            emptylabel3.config(text="Your new weight on the Tandem axle is: " + str(caltandem))
+            if caldrives <= dweight and caltandem <= tweight:
+                emptylabel6.config(text="You are DOT legal to drive!", borderwidth=4, relief="raised",background="green")
+            if caldrives >= dweight or caltandem >= tweight:
+                emptylabel6.config(text="You are NOT DOT legal to drive!", borderwidth=4,relief="raised", background="red")
+def r():
+            caltandem = tandem.get() + a8
+            caldrives = drives.get() - a8
+            emptylabel4.config(text="Your new weight on the Drive axle is: " + str(caldrives))
+            emptylabel3.config(text="Your new weight on the Tandem axle is: " + str(caltandem))
+            if caldrives <= dweight and caltandem <= tweight:
+                emptylabel6.config(text="You are DOT legal to drive!", borderwidth=4, relief="raised",background="green")
+            if caldrives >= dweight or caltandem >= tweight:
+                emptylabel6.config(text="You are NOT DOT legal to drive!", borderwidth=4,relief="raised", background="red")
+def s():
+            caltandem = tandem.get() + a9
+            caldrives = drives.get() - a9
+            emptylabel4.config(text="Your new weight on the Drive axle is: " + str(caldrives))
+            emptylabel3.config(text="Your new weight on the Tandem axle is: " + str(caltandem))
+            if caldrives <= dweight and caltandem <= tweight:
+                emptylabel6.config(text="You are DOT legal to drive!", borderwidth=4, relief="raised",background="green")
+            if caldrives >= dweight or caltandem >= tweight:
+                emptylabel6.config(text="You are NOT DOT legal to drive!", borderwidth=4,relief="raised", background="red")
+def t():
+            caltandem = tandem.get() + a10
+            caldrives = drives.get() - a10
+            emptylabel4.config(text="Your new weight on the Drive axle is: " + str(caldrives))
+            emptylabel3.config(text="Your new weight on the Tandem axle is: " + str(caltandem))
+            if caldrives <= dweight and caltandem <= tweight:
+                emptylabel6.config(text="You are DOT legal to drive!", borderwidth=4, relief="raised",background="green")
+            if caldrives >= dweight or caltandem >= tweight:
+                emptylabel6.config(text="You are NOT DOT legal to drive!", borderwidth=4,relief="raised", background="red")
+
+
+
+
+
+
+
+
+### BUTTONS AND BUTTON FUNCTIONS
+
+
+button1 = Button(window, command=lambda: [my_function(),legal()], text="Calculate", fg="blue", font=("helvecta"))
+button1.config( borderwidth= 0,bg="#34ebe1")
+button1.place(x=309,y=130)
+
+button2 = Button(window, command= close, text="Quit", fg="blue", font=("Arial"))
+button2.place(x=375,y=235)
+
+button3 = Button(window, command= refresh, text="Refresh", fg="blue", font=("Arial"))
+button3.place(x=265,y=235)
+
+def update_buttons():
+    if tandem.get() >= tweight:
+        r1 =   a()
+    if drives.get() >= dweight:
+        r1 =   k()
+
+def update_buttons1():
+    if tandem.get() >= tweight:
+        r2 =  b()
+    if drives.get() >= dweight:
+        r2 =  l()
+
+def update_buttons2():
+    if tandem.get() >= tweight:
+        r3 =  c()
+    if drives.get() >= dweight:
+        r3 =  m()
+
+def update_buttons3():
+    if tandem.get() >= tweight:
+        r4 =  d()
+    if drives.get() >= dweight:
+        r4 =  n()
+
+def update_buttons4():
+    if tandem.get() >= tweight:
+        r5 =  e()
+    if drives.get() >= dweight:
+        r5 =  o()
+
+def update_buttons5():
+    if tandem.get() >= tweight:
+        r6 =  f()
+    if drives.get() >= dweight:
+        r6 =  p()
+
+def update_buttons6():
+    if tandem.get() >= tweight:
+        r7 =  g()
+    if drives.get() >= dweight:
+        r7 =  q()
+
+def update_buttons7():
+    if tandem.get() >= tweight:
+        r8 =  h()
+    if drives.get() >= dweight:
+        r8 =  r()
+
+def update_buttons8():
+    if tandem.get() >= tweight:
+        r9 =  i()
+    if drives.get() >= dweight:
+        r9 =  s()
+
+def update_buttons9():
+    if tandem.get() >= tweight:
+        r10 =  j()
+    if drives.get() >= dweight:
+        r10 =  t()
+
+
+
+update_buttons()
+
+
+r1 = Radiobutton(window, text="1 hole", var=radio, value=1, command=lambda: update_buttons())
+r1.place(x=0, y=205)
+
+r2 = Radiobutton(window, text="2 holes",var=radio, value=2, command=lambda: update_buttons1())
+r2.place(x=60,y=205)
+
+r3 = Radiobutton(window, text="3 holes",var=radio, value=3, command=lambda: update_buttons2())
+r3.place(x=130,y=205)
+
+r4 = Radiobutton(window, text="4 holes",var=radio, value=4, command=lambda: update_buttons3())
+r4.place(x=200,y=205)
+
+r5 = Radiobutton(window, text="5 holes",var=radio, value=5, command=lambda: update_buttons4())
+r5.place(x=270,y=205)
+
+r6 = Radiobutton(window, text="6 holes",var=radio, value=6, command=lambda: update_buttons5())
+r6.place(x=340, y=205)
+
+r7 = Radiobutton(window, text="7 holes",var=radio, value=7, command=lambda: update_buttons6())
+r7.place(x=410,y=205)
+
+r8 = Radiobutton(window, text="8 holes",var=radio, value=8, command=lambda: update_buttons7())
+r8.place(x=480,y=205)
+
+r9 = Radiobutton(window, text="9 holes",var=radio, value=9, command=lambda: update_buttons8())
+r9.place(x=550,y=205)
+
+r10 = Radiobutton(window, text="10 holes",var=radio, value=10, command=lambda: update_buttons9())
+r10.place(x=620,y=205)
+
+
+### QUIT GUI FUNCTION
+
+
+
+
+
+
+
+
+
+
+
+
+window.mainloop()
+
